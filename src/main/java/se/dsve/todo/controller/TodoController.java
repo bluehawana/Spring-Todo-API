@@ -19,14 +19,15 @@ public class TodoController {
     @PostMapping
     public TodoModel createTodo(@RequestBody TodoModel todo) {
         // TODO: Använd todoRepository för att spara det nya todo-objektet i databasen.
-        return null; // Ersätt 'null' med 'todoRepository.save(todo)' för att spara och returnera det nya todo-objektet.
+
+        return todoRepository.save(todo); // Ersätt 'null' med 'todoRepository.save(todo)' för att spara och returnera det nya todo-objektet.
     }
 
     // READ all todos
     @GetMapping
     public List<TodoModel> getAllTodos() {
         // TODO: Använd todoRepository för att hämta alla todo-objekt från databasen.
-        return null; // Ersätt 'null' med 'todoRepository.findAll()' för att hämta och returnera en lista av alla todos.
+        return todoRepository.findAll(); // Ersätt 'null' med 'todoRepository.findAll()' för att hämta och returnera en lista av alla todos.
     }
 
     // READ a single todo by id
@@ -34,8 +35,12 @@ public class TodoController {
     public ResponseEntity<TodoModel> getTodoById(@PathVariable Long id) {
         // TODO: Använd todoRepository för att försöka hitta ett todo-objekt med det angivna id:et.
         // Om objektet finns, returnera det med status OK.
+        if (todoRepository.existsById(id)) {
+            return ResponseEntity.ok(todoRepository.findById(id).get());
+        }
         // Om objektet inte finns, returnera status NOT_FOUND.
-        return null; // Ersätt 'null' med lämplig ResponseEntity beroende på om todo-objektet hittades eller inte.
+          return ResponseEntity.notFound().build();
+        // Ersätt 'null' med lämplig ResponseEntity beroende på om todo-objektet hittades eller inte.
     }
 
     // UPDATE a todo by id
@@ -43,9 +48,17 @@ public class TodoController {
     public ResponseEntity<TodoModel> updateTodo(@PathVariable Long id, @RequestBody TodoModel todoDetails) {
         // TODO: Använd todoRepository för att hitta det befintliga todo-objektet med det angivna id:et.
         // Om det finns, uppdatera dess detaljer och spara det i databasen.
+        if (todoRepository.existsById(id)) {
+            TodoModel todo = todoRepository.findById(id).get();
+            todo.setTitle(todoDetails.getTitle());
+            todo.setDescription(todoDetails.getDescription());
+            todo.setCompleted(todoDetails.isCompleted());
+            return ResponseEntity.ok(todoRepository.save(todo));
+        }
         // Returnera det uppdaterade objektet med status OK.
         // Om objektet inte finns, returnera status NOT_FOUND.
-        return null; // Ersätt 'null' med lämplig ResponseEntity beroende på om uppdateringen lyckades eller inte.
+        return ResponseEntity.notFound().build();
+        // Ersätt 'null' med lämplig ResponseEntity beroende på om uppdateringen lyckades eller inte.
     }
 
     // DELETE a todo by id
@@ -53,7 +66,11 @@ public class TodoController {
     public ResponseEntity<Void> deleteTodo(@PathVariable Long id) {
         // TODO: Använd todoRepository för att kontrollera om ett todo-objekt med det angivna id:et finns.
         // Om det finns, radera objektet från databasen och returnera status OK.
+        if (todoRepository.existsById(id)) {
+            todoRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        }
         // Om objektet inte finns, returnera status NOT_FOUND.
-        return null; // Ersätt 'null' med lämplig ResponseEntity beroende på om raderingen lyckades eller inte.
+        return ResponseEntity.notFound().build(); // Ersätt 'null' med lämplig ResponseEntity beroende på om raderingen lyckades eller inte.
     }
 }

@@ -7,6 +7,7 @@ import se.dsve.todo.model.TodoModel;
 @Repository
 public interface TodoRepository extends JpaRepository<TodoModel, Long> {
     // Här kan vi definiera anpassade metoder för repositoryt
+
 }
 
 /*
