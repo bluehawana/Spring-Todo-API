@@ -77,7 +77,7 @@ public class TodoController {
         // Om det finns, radera objektet från databasen och returnera status OK.
         return todoRepository.findById(id)
                 .map(todo -> {
-                    todoRepository.delete(todo);
+                    todoRepository.deleteById(id);
                     return ResponseEntity.ok().<Void>build();
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
