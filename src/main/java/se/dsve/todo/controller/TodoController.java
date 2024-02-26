@@ -32,6 +32,12 @@ public class TodoController {
         todoRepository.save(new TodoModel("Test2", true)    );
         todoRepository.save(new TodoModel("Test3", false)    );
         todoRepository.save(new TodoModel("Test4", true)    );
+        todoRepository.save(new TodoModel("Test5", false)    );
+        todoRepository.save(new TodoModel("Test6", true)    );
+        todoRepository.save(new TodoModel("Test7", false)    );
+        todoRepository.save(new TodoModel("Test8", true)    );
+        todoRepository.save(new TodoModel("Test9", false)    );
+        todoRepository.save(new TodoModel("Test10", true)    );
         return todoRepository.findAll();// Ersätt 'null' med 'todoRepository.findAll()' för att hämta och returnera en lista av alla todos.
     }
 
@@ -40,12 +46,11 @@ public class TodoController {
     public ResponseEntity<TodoModel> getTodoById(@PathVariable Long id) {
         // TODO: Använd todoRepository för att försöka hitta ett todo-objekt med det angivna id:et.
         // Om objektet finns, returnera det med status OK.
-        if (todoRepository.existsById(id)) {
-            return ResponseEntity.ok(todoRepository.findById(id).get());
-        }
+        return todoRepository.findById(id)
+                .map(todo -> ResponseEntity.ok().body(todo))
+                .orElseGet(() -> ResponseEntity.notFound().build());
         // Om objektet inte finns, returnera status NOT_FOUND.
-          return ResponseEntity.notFound().build();
-        // Ersätt 'null' med lämplig ResponseEntity beroende på om todo-objektet hittades eller inte.
+        //Ersätt 'null' med lämplig ResponseEntity beroende på om todo-objektet hittades eller inte.
     }
 
     // UPDATE a todo by id
@@ -53,18 +58,15 @@ public class TodoController {
     public ResponseEntity<TodoModel> updateTodo(@PathVariable Long id, @RequestBody TodoModel todoDetails) {
         // TODO: Använd todoRepository för att hitta det befintliga todo-objektet med det angivna id:et.
         // Om det finns, uppdatera dess detaljer och spara det i databasen.
-        if (todoRepository.existsById(id)) {
-            return todoRepository.findById(id)
-                    .map(todo -> {
-                        todo.setTitle(todoDetails.getTitle());
-                        todo.setCompleted(todoDetails.isCompleted());
-                        return ResponseEntity.ok(todoRepository.save(todo));
-                    }).orElse(ResponseEntity.notFound().build());
+        return todoRepository.findById(id)
+                .map(todo -> {
+                    todo.setTitle(todoDetails.getTitle());
+                    todo.setCompleted(todoDetails.isCompleted());
+                    return ResponseEntity.ok(todoRepository.save(todo));
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
         // Returnera det uppdaterade objektet med status OK.
         // Om objektet inte finns, returnera status NOT_FOUND.
-        } else {
-            return ResponseEntity.notFound().build();
-        }
         // Ersätt 'null' med lämplig ResponseEntity beroende på om uppdateringen lyckades eller inte.
     }
 
@@ -73,13 +75,14 @@ public class TodoController {
     public ResponseEntity<Void> deleteTodo(@PathVariable Long id) {
         // TODO: Använd todoRepository för att kontrollera om ett todo-objekt med det angivna id:et finns.
         // Om det finns, radera objektet från databasen och returnera status OK.
-        if (todoRepository.existsById(id)) {
-            todoRepository.deleteById(id);
-            return ResponseEntity.ok().build();
-        }
-        // Om objektet inte finns, returnera status NOT_FOUND.
-        else {
-            return ResponseEntity.notFound().build();
-               } // Ersätt 'null' med lämplig ResponseEntity beroende på om raderingen lyckades eller inte.
+        return todoRepository.findById(id)
+                .map(todo -> {
+                    todoRepository.delete(todo);
+                    return ResponseEntity.ok().<Void>build();
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+
+         // Om objektet inte finns, returnera status NOT_FOUND.
+         // Ersätt 'null' med lämplig ResponseEntity beroende på om raderingen lyckades eller inte.
     }
 }
