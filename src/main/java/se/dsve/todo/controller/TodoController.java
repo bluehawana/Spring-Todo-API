@@ -13,8 +13,11 @@ import java.util.Optional;
 @RequestMapping("/api/todos")
 public class TodoController {
 
-    @Autowired
-    private TodoRepository todoRepository;
+    private final TodoRepository todoRepository;
+
+    public TodoController(TodoRepository todoRepository) {
+        this.todoRepository = todoRepository;
+    }
 
     // CREATE
     @PostMapping
@@ -77,7 +80,7 @@ public class TodoController {
         // Om det finns, radera objektet från databasen och returnera status OK.
         return todoRepository.findById(id)
                 .map(todo -> {
-                    todoRepository.deleteById(id);
+                    todoRepository.delete(todo);
                     return ResponseEntity.ok().<Void>build();
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
