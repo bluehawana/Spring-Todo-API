@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.dsve.todo.model.TodoModel;
 import se.dsve.todo.repository.TodoRepository;
-
+import org.springframework.http.HttpStatus;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,16 +75,16 @@ public class TodoController {
 
     // DELETE a todo by id
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTodo(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTodo(@PathVariable Long id, @RequestBody TodoModel todoDetails) {
         // TODO: Använd todoRepository för att kontrollera om ett todo-objekt med det angivna id:et finns.
         // Om det finns, radera objektet från databasen och returnera status OK.
-        return todoRepository.findById(id)
-                .map(todo -> {
-                    todoRepository.delete(todo);
-                    return ResponseEntity.ok().<Void>build();
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        if (todoRepository.existsById(id)) {
+            todoRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
          // Om objektet inte finns, returnera status NOT_FOUND.
          // Ersätt 'null' med lämplig ResponseEntity beroende på om raderingen lyckades eller inte.
     }
-}
