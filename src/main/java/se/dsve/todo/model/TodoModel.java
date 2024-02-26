@@ -12,25 +12,24 @@ public class TodoModel {
     private Long id; // Unikt identifierare för varje todo.
 
     private String title; // Titeln på todo.
+
     private boolean completed; // Markerar om todo är slutförd eller inte.
+
+    // Tom konstruktor som krävs av JPA.
+    public TodoModel() {
+    }
 
     // Konstruktorer
 
-    public TodoModel() {
-        // Tom konstruktor som krävs av JPA.
-    }
-
-    public TodoModel(String title, boolean completed) {
-        // Konstruktor för att skapa en ny todo med titel och status (slutförd eller ej).
+    public TodoModel (String title, boolean completed) {
         this.title = title;
         this.completed = completed;
     }
 
-    // Getters och setters
 
     public Long getId() {
         // Returnera todo-objektets unika ID.
-        return this.id; // Ersätt 'null' med faktisk kod för att returnera ID.
+        return id; // Ersätt 'null' med faktisk kod för att returnera ID.
     }
 
     public void setId(Long id) {
@@ -41,7 +40,7 @@ public class TodoModel {
 
     public String getTitle() {
         // Returnera titeln på todo-objektet.
-        return this.title; // Ersätt 'null' med faktisk kod för att returnera titeln.
+        return title; // Ersätt 'null' med faktisk kod för att returnera titeln.
     }
 
     public void setTitle(String title) {
@@ -52,11 +51,7 @@ public class TodoModel {
 
     public boolean isCompleted() {
         // Kolla om todo-objektet är slutfört.
-        if (this.completed) {
-            return true;
-        } else {
-            return false;
-        }
+        return completed;
         // Ersätt 'false' med faktisk kod för att returnera slutförandestatus.
     }
 
@@ -65,4 +60,5 @@ public class TodoModel {
         this.completed = completed;
         // Ersätt med kod för att ändra slutförandestatus.
     }
+
 }

@@ -7,6 +7,7 @@ import se.dsve.todo.model.TodoModel;
 import se.dsve.todo.repository.TodoRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/todos")
@@ -27,7 +28,11 @@ public class TodoController {
     @GetMapping
     public List<TodoModel> getAllTodos() {
         // TODO: Använd todoRepository för att hämta alla todo-objekt från databasen.
-        return todoRepository.findAll(); // Ersätt 'null' med 'todoRepository.findAll()' för att hämta och returnera en lista av alla todos.
+        todoRepository.save(new TodoModel("Test", false)    );
+        todoRepository.save(new TodoModel("Test2", true)    );
+        todoRepository.save(new TodoModel("Test3", false)    );
+        todoRepository.save(new TodoModel("Test4", true)    );
+        return todoRepository.findAll();// Ersätt 'null' med 'todoRepository.findAll()' för att hämta och returnera en lista av alla todos.
     }
 
     // READ a single todo by id
@@ -49,15 +54,17 @@ public class TodoController {
         // TODO: Använd todoRepository för att hitta det befintliga todo-objektet med det angivna id:et.
         // Om det finns, uppdatera dess detaljer och spara det i databasen.
         if (todoRepository.existsById(id)) {
-            TodoModel todo = todoRepository.findById(id).get();
-            todo.setTitle(todoDetails.getTitle());
-            todo.setDescription(todoDetails.getDescription());
-            todo.setCompleted(todoDetails.isCompleted());
-            return ResponseEntity.ok(todoRepository.save(todo));
-        }
+            return todoRepository.findById(id)
+                    .map(todo -> {
+                        todo.setTitle(todoDetails.getTitle());
+                        todo.setCompleted(todoDetails.isCompleted());
+                        return ResponseEntity.ok(todoRepository.save(todo));
+                    }).orElse(ResponseEntity.notFound().build());
         // Returnera det uppdaterade objektet med status OK.
         // Om objektet inte finns, returnera status NOT_FOUND.
-        return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
         // Ersätt 'null' med lämplig ResponseEntity beroende på om uppdateringen lyckades eller inte.
     }
 
@@ -71,6 +78,8 @@ public class TodoController {
             return ResponseEntity.ok().build();
         }
         // Om objektet inte finns, returnera status NOT_FOUND.
-        return ResponseEntity.notFound().build(); // Ersätt 'null' med lämplig ResponseEntity beroende på om raderingen lyckades eller inte.
+        else {
+            return ResponseEntity.notFound().build();
+               } // Ersätt 'null' med lämplig ResponseEntity beroende på om raderingen lyckades eller inte.
     }
 }
