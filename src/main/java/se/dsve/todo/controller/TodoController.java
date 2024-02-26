@@ -81,7 +81,6 @@ public class TodoController {
                     return ResponseEntity.ok().<Void>build();
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
-
          // Om objektet inte finns, returnera status NOT_FOUND.
          // Ersätt 'null' med lämplig ResponseEntity beroende på om raderingen lyckades eller inte.
     }
