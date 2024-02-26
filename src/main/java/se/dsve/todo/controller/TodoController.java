@@ -74,10 +74,6 @@ public class TodoController {
     // DELETE a todo by id
     @DeleteMapping("/{id}")
     public ResponseEntity<TodoModel> deleteTodo(@PathVariable Long id) {
-        // TODO: Använd todoRepository för att kontrollera om ett todo-objekt med det angivna id:et finns.
-        // Om det finns, radera objektet från databasen och returnera status OK.
-// Om objektet inte finns, returnera status NOT_FOUND.
-        // Ersätt 'null' med lämplig ResponseEntity beroende på om raderingen lyckades eller inte.
         return todoRepository.findById(id)
                 .map(todo -> {
                     todoRepository.deleteById(id);
