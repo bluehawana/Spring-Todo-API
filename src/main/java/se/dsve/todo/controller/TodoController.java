@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.dsve.todo.model.TodoModel;
 import se.dsve.todo.repository.TodoRepository;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -74,12 +75,14 @@ public class TodoController {
     // DELETE a todo by id
     @DeleteMapping("/{id}")
     public ResponseEntity<TodoModel> deleteTodo(@PathVariable Long id) {
-        return todoRepository.findById(id)
-                .map(todo -> {
+                if(todoRepository.existsById(id)) {
+                    todoRepository.findById(id);
                     todoRepository.deleteById(id);
-                    return ResponseEntity.ok().<TodoModel>build();
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                    return new ResponseEntity<>(HttpStatus.OK);
+                }
+                else
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
     }
 
 }
