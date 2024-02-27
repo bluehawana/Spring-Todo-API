@@ -56,13 +56,13 @@ public class TodoController {
 
     // UPDATE a todo by id
     @PutMapping("/{id}")
-    public ResponseEntity<TodoModel> updateTodo(@PathVariable Long id, @RequestBody TodoModel todoDetails) {
+    public ResponseEntity<TodoModel> updateTodo(@PathVariable Long id) {
         // TODO: Använd todoRepository för att hitta det befintliga todo-objektet med det angivna id:et.
         // Om det finns, uppdatera dess detaljer och spara det i databasen.
         return todoRepository.findById(id)
                 .map(todo -> {
-                    todo.setTitle(todoDetails.getTitle());
-                    todo.setCompleted(todoDetails.isCompleted());
+                    todo.setTitle(todo.getTitle());
+                    todo.setCompleted(todo.isCompleted());
                     return ResponseEntity.ok(todoRepository.save(todo));
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -77,9 +77,9 @@ public class TodoController {
         return todoRepository.findById(id)
                 .map(todo -> {
                     todoRepository.deleteById(id);
-                    return ResponseEntity.ok().body(todo);
+                    return ResponseEntity.ok().<TodoModel>build();
                 })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                  .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
 }
